@@ -21,7 +21,6 @@ app.use(bodyparser.urlencoded({ extended: true}))
 app.set('view engine', 'ejs')
  
 app.get('/', function(req, res){
-    // var cursor = db.collection('data').find();
     res.render('index.ejs');
 });
 
@@ -40,3 +39,40 @@ app.post('/show', (req, res)=>{
         res.redirect('/show')
       })
 });
+
+app.route('/edit/:id')
+  .get((req, res) => {
+    var id = req.params.id
+
+    db.collection('data').find(ObjectId(id)).toArray((err, result) => {
+      if(err) return res.send(err)
+      res.render('edit.ejs', {data: result})
+    })
+  })
+  .post((req, res) => {
+    var id = req.params.id
+    var name = req.body.name
+    var surname = req.body.surname
+
+    db.collection('data').updateOne({_id: ObjectId(id)}, {
+      $set: {
+        name: name, 
+        surname: surname
+      }
+    }, (err, result) => {
+      if (err) return res.send(err)
+      res.redirect('/show')
+      console.log('Atualizado no Banco de Dados')
+    })
+  })
+
+app.route('/delete/:id')
+  .get((req, res) => {
+    var id = req.params.id
+
+    db.collection('data').deleteOne({_id: ObjectId(id)}, (err, result) => {
+      if (err) return res.send(500, err)
+      console.log('Deletado do Banco de Dados')
+      res.redirect('/show')
+    })
+  })
