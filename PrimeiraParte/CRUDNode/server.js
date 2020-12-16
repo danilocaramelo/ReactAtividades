@@ -9,7 +9,7 @@ const uri = "mongodb+srv://danilo:caramelo@cluster0.fdeso.mongodb.net/cursoReact
  
 MongoClient.connect(uri, (err, client) => {
   if (err) return console.log(err)
-  db = client.db('cursoReact') // coloque o nome do seu DB
+  db = client.db('cursoReact')
  
   app.listen(3000, () => {
     console.log('Server running on port 3000')
@@ -33,7 +33,6 @@ app.get('/show', (req, res) => {
 })
  
 app.post('/show', (req, res)=>{
-    //criar a coleção “data”, que irá armazenar nossos dados
     db.collection('data').save(req.body, (err, result) => {
         if (err) return console.log(err)
      
