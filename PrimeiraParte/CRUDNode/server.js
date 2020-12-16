@@ -17,34 +17,35 @@ MongoClient.connect(uri, (err, client) => {
 })
  
 app.use(bodyparser.urlencoded({ extended: true}))
- 
 app.set('view engine', 'ejs')
- 
+
+
+//ROTAS DOS USUÁRIOS
 app.get('/', function(req, res){
     res.render('index.ejs');
 });
 
-app.get('/show', (req, res) => {
-    db.collection('data').find().toArray((err, results) => {
+app.route('/show')
+  .get((req, res) => {
+    db.collection('users').find().toArray((err, results) => {
         if (err) return console.log(err)
         res.render('shows.ejs', { data: results })
     })
-})
- 
-app.post('/show', (req, res)=>{
-    db.collection('data').save(req.body, (err, result) => {
+  })
+  .post((req, res)=>{
+    db.collection('users').save(req.body, (err, result) => {
         if (err) return console.log(err)
      
         console.log('Salvo no Banco de Dados')
         res.redirect('/show')
       })
-});
+  })
 
 app.route('/edit/:id')
   .get((req, res) => {
     var id = req.params.id
 
-    db.collection('data').find(ObjectId(id)).toArray((err, result) => {
+    db.collection('users').find(ObjectId(id)).toArray((err, result) => {
       if(err) return res.send(err)
       res.render('edit.ejs', {data: result})
     })
@@ -54,7 +55,7 @@ app.route('/edit/:id')
     var name = req.body.name
     var surname = req.body.surname
 
-    db.collection('data').updateOne({_id: ObjectId(id)}, {
+    db.collection('users').updateOne({_id: ObjectId(id)}, {
       $set: {
         name: name, 
         surname: surname
@@ -70,9 +71,71 @@ app.route('/delete/:id')
   .get((req, res) => {
     var id = req.params.id
 
-    db.collection('data').deleteOne({_id: ObjectId(id)}, (err, result) => {
+    db.collection('users').deleteOne({_id: ObjectId(id)}, (err, result) => {
       if (err) return res.send(500, err)
       console.log('Deletado do Banco de Dados')
       res.redirect('/show')
+    })
+  })
+
+
+// ROTAS DOS PRODUTOS
+app.route('/product')
+  .get((req, res) => {
+    res.render('product/product.ejs');
+  })
+  .post((req, res) => {
+    db.collection('products').save(req.body, (err, result) => {
+      if(err) return console.log(err)
+
+      console.log('Salvo no banco de dados')
+      res.redirect('/showProduct')
+    })
+  })
+
+app.route('/showproduct')
+  .get((req, res) => {
+    db.collection('products').find().toArray((err, results) => {
+      if (err) return console.log(err)
+      res.render('product/showProduct.ejs', { data: results })
+    })
+  })
+
+app.route('/deleteproduct/:id')
+  .get((req, res) => {
+    var id = req.params.id
+
+    db.collection('products').deleteOne({_id: ObjectId(id)}, (err, result) => {
+      if (err) return res.send(500, err)
+      console.log('Deletado do Banco de Dados')
+      res.redirect('/showproduct')
+    })
+  })
+
+app.route('/editproduct/:id')
+  .get((req, res) => {
+    var id = req.params.id
+
+    db.collection('products').find(ObjectId(id)).toArray((err, result) => {
+      if(err) return res.send(err)
+      res.render('product/editProduct.ejs', {data: result})
+    })
+  })
+  .post((req, res) => {
+    var id = req.params.id
+    var productName = req.body.productName
+    var price = req.body.price
+    var date = req.body.date
+
+    db.collection('products').updateOne({_id: ObjectId(id)}, {
+      $set: {
+        productName: productName, 
+        price: price,
+        date: date
+      }
+    }, (err, result) => {
+      if (err) return res.send(err)
+      res.redirect('/showproduct')
+      console.log('Atualizado no Banco de Dados')
     })
   })
