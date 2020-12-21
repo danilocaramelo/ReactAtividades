@@ -1,13 +1,5 @@
 fetch = require("node-fetch");
 
-// function catFacts() {
-//     fetch('https://cat-fact.herokuapp.com/facts')
-//         .then(response => response.json())
-//         .then(console.log)
-// }
-
-// catFacts()
-
 async function catFacts() {
     let response = await fetch('https://cat-fact.herokuapp.com/facts')
     let data = await response.json()
