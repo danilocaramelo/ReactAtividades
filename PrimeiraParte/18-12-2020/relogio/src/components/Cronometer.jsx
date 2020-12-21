@@ -10,7 +10,7 @@ function Cronometer() {
     if(isTurnOn) {
         const interval = setInterval(() => {
             setCount(count => count + 1)
-          }, 10);
+          },10);
           return () => clearInterval(interval);
     }
   })
