@@ -2,37 +2,56 @@ import {useEffect, useState} from 'react';
 import List from './List';
 
 function Cronometer() {
-  const [count, setCount] = useState(0);
+  const [time, setTime] = useState("00:00:00.000");
+  const [timeReference, setTimeReference] = useState({timeReference: null});
   const [savePoint, setSavePoint] = useState([])
   const [isTurnOn, setIsTurnOn] = useState(false);
 
   useEffect(() => {
     if(isTurnOn) {
         const interval = setInterval(() => {
-            setCount(count => count + 1)
-          },10);
+            updateTime();
+          },50);
           return () => clearInterval(interval);
     }
   })
 
-  function handleClick() {
-      setIsTurnOn(!isTurnOn);
+  function updateTime() {
+      if(timeReference.timeReference == null) {
+          setTimeReference({timeReference: Date.now()});
+      }
+      let newHour = Date.now();
+      let stopWatch = newHour - timeReference.timeReference;
+      let miliseconds = stopWatch % 1000;
+      stopWatch = Math.floor(stopWatch / 1000);
+      let seconds = stopWatch % 60;
+      stopWatch = Math.floor(stopWatch / 60);
+      let minutes = stopWatch % 60;
+      stopWatch = Math.floor(stopWatch / 60);
+      let hours = stopWatch % 60;
+
+      setTime(hours + ":" + minutes + ":" + seconds + "." + miliseconds);
+  }
+
+  function startStopWatch() {
+    setIsTurnOn(!isTurnOn);
   }
 
   function stopCronometer() {
-      setCount(0);
+      setTime("00:00:00.000");
+      setTimeReference({timeReference: null});
       setIsTurnOn(false);
       setSavePoint([]);
   }
 
   function savePointFunction() {
-      setSavePoint(savePoint.concat(count));
+      setSavePoint(savePoint.concat(time));
   }
 
     return(
         <>
-            <div>{count}</div>
-            <button onClick={handleClick}>Iniciar</button>
+            <div>{time}</div>
+            <button onClick={startStopWatch}>Iniciar / pausar</button>
             <button onClick={stopCronometer}>Parar</button>
             <button onClick={savePointFunction}>Salvar</button>
             <List list={savePoint}></List>
