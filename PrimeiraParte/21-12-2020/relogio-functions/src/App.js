@@ -1,6 +1,7 @@
 import './App.css';
 import Cronometer from './components/Cronometer';
 import Clock from './components/Clock';
+import Timer from './components/Timer';
 
 function App() {
 
@@ -8,6 +9,7 @@ function App() {
     <>
       <Clock/>
       <Cronometer></Cronometer>
+      <Timer></Timer>
     </>
   );
 }
