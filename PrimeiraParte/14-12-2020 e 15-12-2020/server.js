@@ -3,9 +3,10 @@ const app = express()
 const bodyparser = require('body-parser')
  
 const ObjectId = require('mongodb').ObjectID
- 
+require('dotenv/config'); 
 const MongoClient = require('mongodb').MongoClient
-const uri = "mongodb+srv://danilo:caramelo@cluster0.fdeso.mongodb.net/cursoReact?retryWrites=true&w=majority";
+let uri = process.env.DB_URI
+
  
 MongoClient.connect(uri, (err, client) => {
   if (err) return console.log(err)
